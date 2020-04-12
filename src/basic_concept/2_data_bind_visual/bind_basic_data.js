@@ -1,13 +1,29 @@
+// 待渲染数据
 const data = [20, 15, 30, 50, 80, 70, 45, 22, 18];
 
-setInterval(()=>{
+function handle_bind_basic_data () {
+
+  // 定时更改数据并重新渲染
+  setInterval(()=>{
+    changeData();
+    renderData();
+  }, 2000);
+
+  // 初始渲染
+  renderData();
+}
+
+/**
+ * 改变待渲染数据
+ */
+function changeData () {
   data.shift();
   data.push(Math.round(Math.random() * 100));
-  renderData();
-}, 2000);
+}
 
-renderData();
-
+/**
+ * 渲染可视化数据
+ */
 function renderData () {
 
   const bars = d3.select('body')
@@ -26,7 +42,7 @@ function renderData () {
     .style('border', '1px solid #531dab')
     .style('border-radius', '4px')
     .style('margin', '10px')
-    .style('padding', '0px 4px')
+    .style('padding', '0px 12px')
     .text(d => {
       return d;
     })
