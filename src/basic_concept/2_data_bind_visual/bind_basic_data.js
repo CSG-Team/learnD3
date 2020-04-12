@@ -27,13 +27,13 @@ function changeData () {
 function renderData () {
 
   const bars = d3.select('body')
-    .selectAll('div.h-bar')
-    .data(data);
+    .selectAll('div.h-bar') // d3 可以预选择元素，这时候页面并没这些元素， 可以理解为 声明应该有这些元素
+    .data(data); // data选中已经进入可视化状态的数据
   
-  bars.enter()
+  bars.enter()  // enter选中了未进入可视化状态
     .append('div')
     .attr('class', 'h-bar')
-  .merge(bars)
+  .merge(bars)  // merge将未进入和进入可视化状态的合并以便于统一处理
     .style('width', d => {
       return (d * 2) + 'px';
     })
@@ -49,6 +49,6 @@ function renderData () {
 
   // exit
   bars.exit()
-    .remove();
+    .remove(); // remove()函数删除那些需要退出的元素
 
 }
