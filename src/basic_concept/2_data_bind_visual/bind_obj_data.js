@@ -12,6 +12,8 @@ const data = [
   { width:25, color: 17},
 ];
 
+// 定义了一个颜色插补器
+// 返回一个函数 通过 domain 的值 来映射 range中的值的
 const colorScale = d3.scaleLinear()
   .domain([0, 100])
   .range(['#722ed1', '#ffadd2']);
