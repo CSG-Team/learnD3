@@ -12,10 +12,20 @@ const data = [
   { value: 99, category: 'people', color: '#fadb14' },
 ];
 
+let bars;
+
 renderData(data);
 
-function cat(category) {
-  renderData(data, category)
+// 选择分类
+function handel_cat(category) {
+  renderData(data, category);
+}
+
+function handel_sort(rule) {
+  renderData(data);  // 这句话不能少 ， 目前理解是在这次渲染期间的bars才能触发这些sort之类的渲染方法从而触发渲染
+  bars.sort((a, b) => {
+    return rule === 'asc' ? -1 : 1;
+  });
 }
 
 /**
@@ -23,7 +33,7 @@ function cat(category) {
  */
 function renderData (data, category) {
 
-  const bars = d3.select('body')
+  bars = d3.select('.container')
     .selectAll('div.h-bar') // d3 可以预选择元素，这时候页面并没这些元素， 可以理解为 声明应该有这些元素
     .data(data); // data选中已经进入可视化状态的数据
   
