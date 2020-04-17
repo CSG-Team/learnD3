@@ -31,17 +31,17 @@
       const bars = d3.select('.container')
         .selectAll('div.bar')
         .data(data)
-        .style('width', d => d * 5 )
-        .style('height', 10 )
+        .style('width', d => d * 5 + 'px' )
+        .style('height', 10 + 'px')
         .style('border', '1px solid black');
 
       // enter
 
         bars.enter()
         .append('div')
-        .attr('class', 'h-bar')
-        .style('width', d => d * 5 )
-        .style('height', 10 )
+        .attr('class', 'bar')
+        .style('width', d => d * 5 + 'px' )
+        .style('height', 10 + 'px')
         .style('border', '1px solid black');
       
       // exit
