@@ -22,6 +22,20 @@
     最基本的线性尺度，将定义域[1, 10]线性映射到值域[10, 100],将值用文本渲染：
   </p>
   <div id="linear-scale"></div>
+  <br />
+  <p> 
+    其他的基本尺度也很多：
+  </p>
+  <button onclick="renderScale(data, linerScale, '#linear-container')">线性scale</button>
+  <button onclick="renderScale(data, powScaleSimple, '#pow-container1')">指数scale(基本指数，定义域的n次幂)</button>
+  <button onclick="renderScale(data, powScale, '#pow-container2')">指数scale</button>
+  <button onclick="renderScale(data, logScale, '#log-container')">对数scale</button>
+
+  <div id="linear-container"></div>
+  <div id="pow-container1"></div>
+  <div id="pow-container2"></div>
+
+  <div id="log-container"></div>
   
   
   <script src="https://cdn.bootcss.com/d3/4.13.0/d3.js"></script>
@@ -32,6 +46,8 @@
     ];
   </script>
   <script src="./basic_scale.js"></script>
+  <script src="./basic_scale_more.js"></script>
+
  
 </body>
 </html>
