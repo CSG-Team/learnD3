@@ -5,14 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Bind</title>
 </head>
+<style>
+  .one-section{
+    /* float: left; */
+    display: inline-block;
+    width: 30px;
+    border: 1px solid #1d39c4;
+    margin-left: 4px;
+    text-align: center;
+  }
+</style>
 <body>
 
-  <h1>Data Bind</h1>
-
-  <div class="container">
-  </div>
+  <h1>Scale</h1>
+  <p>
+    最基本的线性尺度，将定义域[1, 10]线性映射到值域[10, 100],将值用文本渲染：
+  </p>
+  <div id="linear-scale"></div>
+  
   
   <script src="https://cdn.bootcss.com/d3/4.13.0/d3.js"></script>
+  <script>
+    // define data
+    const data = [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+    ];
+  </script>
   <script src="./basic_scale.js"></script>
  
 </body>
