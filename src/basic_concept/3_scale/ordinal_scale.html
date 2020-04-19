@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Bind</title>
+  <style>
+    .section{
+      width: 100px;
+      text-align: center;
+      margin:4px 4px;
+      border-radius: 4px;
+      display: inline-block;
+      border: 1px solid darkgray;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Scale</h1>
+  <p>
+    有序尺度映射
+  </p>
+  <p>
+    有序尺度映射,应该是离散值映射
+  </p>
+  <div>
+    <button onclick="render(data, '.container1', wordScale)">映射字母</button>
+    <div class="container1"></div>
+  </div>
+  <div>
+    <button onclick="render(data, '.container2', colorScale20b)">映射颜色</button>
+    <div class="container2"></div>
+  </div>
+  <div>
+    <button onclick="render(data, '.container3', colorScaleMine)">自选颜色</button>
+    <div class="container3"></div>
+  </div>
+
+  <script src="https://cdn.bootcss.com/d3/4.13.0/d3.js"></script>
+  <script src="./ordinal_scale.js"></script>
+
+</body>
+</html>
