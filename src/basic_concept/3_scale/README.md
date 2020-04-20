@@ -127,3 +127,5 @@ function render(data, selector, scale) {
 上面的demo代码中，展示两种离散的映射方式，一种是映射成字符，一种是映射成颜色色值。
 d3.schemeCategory20b是d3的内置配色方案之一，d3还有其他的内置配色方案。
 
+# scaleLinear线性尺度的更多用法
+
