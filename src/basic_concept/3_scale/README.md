@@ -128,4 +128,51 @@ function render(data, selector, scale) {
 d3.schemeCategory20b是d3的内置配色方案之一，d3还有其他的内置配色方案。
 
 # scaleLinear线性尺度的更多用法
+线性尺度除了直接在数字间做映射外，其实还能找到字符串中的数字，并将数字部分按线性尺度比例一一映射出来。下面的例子中说明了这一点：
+```js
+// 插值字符串尺度
+const sizeStringScale = d3.scaleLinear()
+  .domain([0, 9])
+  .range([
+    'italic bold 12px/30px Georgia, serif',
+    'italic bold 120px/180px Georgia, serif',
+  ]);
+
+d3.select('.textContainer')
+  .selectAll('div.textCard')
+  .data(data)
+  .enter()
+  .append('div')
+  .classed('textCard', true)
+  .text(d => d)
+  .style('border', '1px solid #531dab')
+  .style('padding', '10px')
+  .style('margin', '10px')
+  .style('display', 'inline-block')
+  .style('font', d =>(sizeStringScale(d)));
+
+```
+
+另外一个比较常用的是在两种颜色间做插值，从而在一定程度上实现色彩的平滑过度：
+```js
+// 插颜色
+const colorScale = d3.scaleLinear()
+  .domain([0, 19])
+  .range(['#b37feb', 'black']) // 20个颜色慢慢的从紫色到黑色过度
+
+d3.select('.colorContainer')
+  .selectAll('div.colorCard')
+  .data(data)
+  .enter()
+  .append('div')
+  .classed('colorCard', true)
+  .text(d => colorScale(d))
+  .style('border', '1px solid darkgray')
+  .style('color', 'white')
+  .style('padding', '10px')
+  .style('display', 'inline-block')
+  .style('background', d =>(colorScale(d)));
+
+
+```
 
