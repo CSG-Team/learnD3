@@ -18,7 +18,10 @@ d3中的尺度完全相符合与上述数学定义。通常都是一定规则下
 ```
 
 # D3中常用尺度
+这里只介绍了三种，其实还有很多种。更全面的了解[移步官网API](https://github.com/d3/d3-scale/blob/v2.2.2/README.md#api-reference)
+
 ## 连续尺度
+[API](https://github.com/d3/d3-scale/blob/v2.2.2/README.md#scaleLinear)
 连续尺度是将连续的定义域映射到值域的尺度函数。常见的有线性尺度、指数尺度、对数尺度等。概念很简单就是根据函数规则已知输入求解输出， 最简单Demo：
 ```js
 const scale = d3.scaleLinear()
@@ -48,6 +51,7 @@ const powScaleSimple = d3.scaleLog() // 对数
 上述代码是最简单的指数尺度和对数尺度函数。
 
 ## 时间尺度
+[API](https://github.com/d3/d3-scale/blob/v2.2.2/README.md#time-scales)
 时间尺度的输入是时间对象（Date对象），是一种把时间映射成数值的函数。demo代码：
 
 ```js
@@ -81,6 +85,7 @@ d3.select('.container')
 另外，d3.timeFormat('%Y-%m-%d')是d3对时间格式化的处理方法，具体参见API，d3提供了很多常用的格式化模式。
 
 ## 有序尺度(离散)
+[API](https://github.com/d3/d3-scale/blob/v2.2.2/README.md#time-scales)
 有序尺度针对定义域是非时间值的离散量。比如，'a' —> 'good', b -> 'red', c -> 555。当然，实际的需要的映射可能并不是这么没有规则。
 概念简单，直接代码说话吧：
 ```js
@@ -173,6 +178,7 @@ d3.select('.colorContainer')
   .style('display', 'inline-block')
   .style('background', d =>(colorScale(d)));
 
-
 ```
+
+线性尺度内借助线性插值器来进行插值求解，d3提供了很多独立的插值器（interpolator）,未来在动画中会频繁用到，届时再看[interpolator](https://github.com/d3/d3/blob/master/API.md?_blank#interpolators-d3-interpolate)。
 
