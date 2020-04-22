@@ -1,6 +1,6 @@
 // svg create
-const width = 700;
-const height = 700;
+const width = 600;
+const height = 600;
 const margin = 32;
 const paintWidth = width - 2 * margin;
 const verticalOffset = 100;
@@ -58,3 +58,27 @@ d3.selectAll('g.y-axis g.tick')
   .attr('x2', width - 2 * margin)
   .attr('y2', 0)
   .attr('stroke', 'darkgray');
+
+// 随机改变尺度和刻度个数
+function rescale() {
+  // 改变scale
+  axis
+    .ticks(Math.round(Math.random() * 10) + 1)
+    .scale()
+    .domain([0, Math.round(Math.random() * 500)]);
+  svg.select('g.x-axis')
+    .transition()
+    .duration(1000)
+    .call(axis);
+
+  // 重新绘制竖线
+  d3.selectAll('g.x-axis g.tick')
+    .append('line')
+    .classed('grid-line', true)
+    .attr('x1', 0)
+    .attr('y1', 0)
+    .attr('x2', 0)
+    .attr('y2', -(height -  margin))
+    .attr('stroke', 'darkgray');
+
+}
