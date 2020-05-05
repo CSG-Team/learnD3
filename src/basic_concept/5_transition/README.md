@@ -1,6 +1,7 @@
 # 动画
 动画其实很重要。可视化项目中适当的使用动画，除了能带来酷炫的效果之外，还能增加故事性和说明性。
 d3提供了全套的动画支持。
+[Trasiition API](https://github.com/xswei/d3-transition/blob/master/README.md#selection_transition)
 
 ## 基本用法
 ### 单元素动画
