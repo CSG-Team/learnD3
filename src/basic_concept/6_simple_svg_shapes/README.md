@@ -31,13 +31,13 @@ SVG支持的图形有：
 
 ### SVG 基本图形
 line、 circle、 ellipse 、 polygon、 rect这些图形，各有各自的特殊属性。
-* (line)[https://developer.mozilla.org/en-US/docs/Web/SVG/Element/line] 需要指定x1, y1, x2, y2;
-* (circle)[https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle] 需要指定 x, y, r; 
-* (rect)[https://developer.mozilla.org/en-US/docs/Web/SVG/Element/rect] 需要指定 x, y, width, height;
-* (polygon)[https://developer.mozilla.org/en-US/docs/Web/SVG/Element/polygon] 需要指定 points;
-* (ellipse)[https://developer.mozilla.org/en-US/docs/Web/SVG/Element/ellipse] 需要指定cx, cy, rx, ry;
+* [line](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/line) 需要指定x1, y1, x2, y2;
+* [circle](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle) 需要指定 x, y, r; 
+* [rect](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/rect) 需要指定 x, y, width, height;
+* [polygon](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/polygon)   需要指定 points;
+* [ellipse](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/ellipse)  需要指定cx, cy, rx, ry;
 
-另外，一些通用的绘图样式属性,可以参考这里 : (SVG Presentation Attributes)[https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/Presentation]
+另外，一些通用的绘图样式属性,可以参考这里 : [SVG Presentation Attributes SVG的表现属性 ](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/Presentation) 
 
 ### path 元素
 
@@ -91,7 +91,7 @@ C 命令以当前点位置为起点，依次设置 起点控制点坐标、终�
 S 命令以上一条三阶贝塞尔曲线的终点为起点，设置两个参数终点控制点坐标、结束点就行，其中起点控制点对称上一条终点控制点算出。类似二阶中T命令。
 
 关于path就简单说这里了。
-这篇 (svg之path详解)[https://www.jianshu.com/p/c819ae16d29b] 例子更为详细，可以参考。
+这篇 [svg之path详解](https://www.jianshu.com/p/c819ae16d29b) 例子更为详细，可以参考。
 
 ## SVG Using in D3.js
 
