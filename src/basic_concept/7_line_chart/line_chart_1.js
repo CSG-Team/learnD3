@@ -31,7 +31,10 @@ const data = [
 // 输出是是一串可以被设置为 path中d属性值的字符串
 const line = d3.line() // <-D
   .x(function(d){return x(d.x);})
-  .y(function(d){return y(d.y);});
+  .y(function(d){return y(d.y);})
+  // curve可以设置多种线条插补样式
+  // .tension属性更是可以接受一个0-1的值用来确定进一步的弯曲程度
+  .curve(d3.curveBasis);
 
 const svg = d3.select('body')
   .append('svg')
