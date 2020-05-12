@@ -1,246 +1,182 @@
-function lineChart() { // <-1A
-  var _chart = {};
+const width = 600;
+const height = 600;
+const margins = {
+  top: 30,
+  left: 30,
+  bottom: 30,
+  right: 30,
+};
+const colors = d3.scaleOrdinal(d3.schemeCategory10);
 
-  var _width = 600, _height = 300, // <-1B
-          _margins = {top: 30, left: 30, right: 30, bottom: 30},
-          _x, _y,
-          _data = [],
-          _colors = d3.scaleOrdinal(d3.schemeCategory10),
-          _svg,
-          _bodyG,
-          _line;
+const draw_width = width - margins.left - margins.right;
+const draw_height = height - margins.top - margins.bottom;
 
-  _chart.render = function () { // <-2A
-      if (!_svg) {
-          _svg = d3.select("body").append("svg") // <-2B
-                  .attr("height", _height)
-                  .attr("width", _width);
+const x_start = margins.left;
+const y_start = height - margins.bottom;
+const y_end = margins.top;
 
-          renderAxes(_svg);
+let svg, chart_g;
 
-          defineBodyClip(_svg);
-      }
+let isFirstRendered = false;
 
-      renderBody(_svg);
-  };
 
-  function renderAxes(svg) {
-      var axesG = svg.append("g")
-              .attr("class", "axes");
-
-      renderXAxis(axesG);
-
-      renderYAxis(axesG);
+function render(data){
+  if(!svg) {
+    svg = d3.select('body')
+      .append('svg')
+      .attr('width', width)
+      .attr('height', height);
   }
 
-  function renderXAxis(axesG){
-      var xAxis = d3.axisBottom()
-              .scale(_x.range([0, quadrantWidth()]));
+  const xScale = d3.scaleLinear()
+    .domain([0, 10])
+    .range([0, draw_width]);
+  const yScale = d3.scaleLinear()
+    .domain([0, 10])
+    .range([draw_height, 0]);
+  
+  // axis render
+  if(!isFirstRendered){
+    isFirstRendered = renderAxis(xScale, yScale);
 
-      axesG.append("g")
-              .attr("class", "x axis")
-              .attr("transform", function () {
-                  return "translate(" + xStart() + "," + yStart() + ")";
-              })
-              .call(xAxis);
+    let padding = 5;
 
-      d3.selectAll("g.x g.tick")
-          .append("line")
-              .classed("grid-line", true)
-              .attr("x1", 0)
-              .attr("y1", 0)
-              .attr("x2", 0)
-              .attr("y2", - quadrantHeight());
+    svg.append("defs")
+      .append("clipPath")
+      .attr("id", "body-clip")
+      .append("rect")
+      .attr("x", 0 - padding)
+      .attr("y", 0)
+      .attr("width", draw_width+ 2 * padding)
+      .attr("height", draw_height);
   }
 
-  function renderYAxis(axesG){
-      var yAxis = d3.axisLeft()
-              .scale(_y.range([quadrantHeight(), 0]));
 
-      axesG.append("g")
-              .attr("class", "y axis")
-              .attr("transform", function () {
-                  return "translate(" + xStart() + "," + yEnd() + ")";
-              })
-              .call(yAxis);
+    // lines
+    if(!chart_g){
+      chart_g = svg.append('g')
+        .attr('class', 'body')
+        .attr("transform", "translate("
+          + x_start + ","
+          + y_end + ")")  
+        .attr("clip-path", "url(#body-clip)");
+    }
 
-       d3.selectAll("g.y g.tick")
-          .append("line")
-              .classed("grid-line", true)
-              .attr("x1", 0)
-              .attr("y1", 0)
-              .attr("x2", quadrantWidth())
-              .attr("y2", 0);
-  }
+    const lineFunc = d3.line()
+      .x(function(d){ return xScale(d.x)})
+      .y(function(d){ return yScale(d.y)})
+      // .curve(d3.curveBasis);
 
-  function defineBodyClip(svg) { // <-2C
-      var padding = 5;
-
-      svg.append("defs")
-              .append("clipPath")
-              .attr("id", "body-clip")
-              .append("rect")
-              .attr("x", 0 - padding)
-              .attr("y", 0)
-              .attr("width", quadrantWidth() + 2 * padding)
-              .attr("height", quadrantHeight());
-  }
-
-  function renderBody(svg) { // <-2D
-      if (!_bodyG)
-          _bodyG = svg.append("g")
-                  .attr("class", "body")
-                  .attr("transform", "translate("
-                      + xStart() + ","
-                      + yEnd() + ")") // <-2E
-                  .attr("clip-path", "url(#body-clip)");
-
-      renderLines();
-
-      renderDots();
-  }
-
-  function renderLines() {
-      _line = d3.line() //<-4A
-                      .x(function (d) { return _x(d.x); })
-                      .y(function (d) { return _y(d.y); });
-
-      var pathLines = _bodyG.selectAll("path.line")
-              .data(_data);
-
-      pathLines
-              .enter() //<-4B
-                  .append("path")
-              .merge(pathLines)
-                  .style("stroke", function (d, i) {
-                      return _colors(i); //<-4C
-                  })
-                  .attr("class", "line")
-              .transition() //<-4D
-                  .attr("d", function (d) { return _line(d); });
-  }
-
-  function renderDots() {
-      _data.forEach(function (list, i) {
-          var circle = _bodyG.selectAll("circle._" + i) //<-4E
-                  .data(list);
-
-          circle.enter()
-                  .append("circle")
-              .merge(circle)
-                  .attr("class", "dot _" + i)
-                  .style("stroke", function (d) {
-                      return _colors(i); //<-4F
-                  })
-              .transition() //<-4G
-                  .attr("cx", function (d) { return _x(d.x); })
-                  .attr("cy", function (d) { return _y(d.y); })
-                  .attr("r", 4.5);
+    const pathLines = chart_g.selectAll('path.line')
+      .data(data);
+    pathLines
+      .enter()
+      .append('path')
+      .merge(pathLines)
+      .style('stroke', function(d, i){
+        return colors(i);
+      })
+      .attr('class', 'line')
+      .transition()
+      .attr('d', function(d){
+        return lineFunc(d);
       });
-  }
 
-  function xStart() {
-      return _margins.left;
-  }
 
-  function yStart() {
-      return _height - _margins.bottom;
-  }
+    // render dot circle 
+    data.forEach(function (oneList, i) {
+      var circle = chart_g.selectAll("circle._" + i)  
+        .data(oneList);
 
-  function xEnd() {
-      return _width - _margins.right;
-  }
+      circle.enter()
+        .append("circle")
+        .merge(circle)
+        .attr("class", "dot _" + i)
+        .style("stroke", function (d) {
+          return colors(i);  
+        })
+        .transition()  
+        .attr("cx", function (d) { return xScale(d.x); })
+        .attr("cy", function (d) { return yScale(d.y); })
+        .attr("r", 4.5);
+    });
 
-  function yEnd() {
-      return _margins.top;
-  }
 
-  function quadrantWidth() {
-      return _width - _margins.left - _margins.right;
-  }
-
-  function quadrantHeight() {
-      return _height - _margins.top - _margins.bottom;
-  }
-
-  _chart.width = function (w) {
-      if (!arguments.length) return _width;
-      _width = w;
-      return _chart;
-  };
-
-  _chart.height = function (h) { // <-1C
-      if (!arguments.length) return _height;
-      _height = h;
-      return _chart;
-  };
-
-  _chart.margins = function (m) {
-      if (!arguments.length) return _margins;
-      _margins = m;
-      return _chart;
-  };
-
-  _chart.colors = function (c) {
-      if (!arguments.length) return _colors;
-      _colors = c;
-      return _chart;
-  };
-
-  _chart.x = function (x) {
-      if (!arguments.length) return _x;
-      _x = x;
-      return _chart;
-  };
-
-  _chart.y = function (y) {
-      if (!arguments.length) return _y;
-      _y = y;
-      return _chart;
-  };
-
-  _chart.addSeries = function (series) { // <-1D
-      _data.push(series);
-      return _chart;
-  };
-
-  return _chart; // <-1E
 }
 
-function randomData() {
-  return Math.random() * 9;
+
+function renderAxis(xScale, yScale) {
+  const axis_g = svg.append('g')
+    .attr('class', 'axis');
+
+  const xAxis = d3.axisBottom()
+    .scale(xScale);
+  axis_g.append('g')
+    .attr('class', 'x_axis')
+    .attr('transform', function(){
+      return 'translate(' + x_start + ',' + y_start + ')' 
+    })
+    .call(xAxis);
+
+  d3.selectAll("g.x_axis g.tick")
+    .append("line")
+    .classed("grid-line", true)
+    .attr("x1", 0)
+    .attr("y1", 0)
+    .attr("x2", 0)
+    .attr("y2", - draw_height)
+    .attr('stroke', 'lightgray');
+
+  const yAxis = d3.axisLeft()
+    .scale(yScale);
+  axis_g.append('g')
+    .attr('class', 'y_axis')
+    .attr('transform', function(){
+      return 'translate(' + x_start + ',' + y_end + ')' 
+    })
+    .call(yAxis);
+
+  d3.selectAll("g.y_axis g.tick")
+    .append("line")
+    .classed("grid-line", true)
+    .attr("x1", 0)
+    .attr("y1", 0)
+    .attr("x2", draw_width)
+    .attr("y2", 0)
+    .attr('stroke', 'lightgray');
+
+  return true;
+
+
 }
 
-function update() {
-  for (var i = 0; i < data.length; ++i) {
-      var series = data[i];
-      series.length = 0;
-      for (var j = 0; j < numberOfDataPoint; ++j)
-          series.push({x: j, y: randomData()});
+let data = [{x: 0, y: 5}, {x: 1, y: 5},{x: 2, y: 5}];
+const MAX_COUNT = 10;
+function pushData(){
+  if(data.length > MAX_COUNT){
+    data.shift();
   }
+  const newData = data.map((item, index) => {
+    return {
+      x: index,
+      y: item.y
+    }
+  });
+  newData.push({
+    x: data.length,
+    y: Math.ceil(Math.random() * 10)
+  })
 
-  chart.render();
+  data =  newData;
 }
 
-var numberOfSeries = 2,
-  numberOfDataPoint = 11,
-  data = [];
 
-for (var i = 0; i < numberOfSeries; ++i)
-  data.push(d3.range(numberOfDataPoint).map(function (i) {
-      return {x: i, y: randomData()};
-  }));
 
-var chart = lineChart()
-      .x(d3.scaleLinear().domain([0, 10]))
-      .y(d3.scaleLinear().domain([0, 10]));
+render([data]);
 
-data.forEach(function (series) {
-  chart.addSeries(series);
-});
+function repeat(){
+  pushData();
+  render([data])
+}
 
-chart.render();
-
-setInterval(()=>{
-  update();
-}, 2000)
+setInterval(repeat, 1000)
