@@ -37,8 +37,13 @@ function render(innerRadius, endAngle){
     .transition()
     .duration(1000)
     .attrTween('d', function(d){
+      // d is current element data
       const start = { startAngle: 0, endAngle: 0};
+
+      // 插值器
       const interpolate = d3.interpolate(start, d);
+
+      // t表示时间
       return function(t){
         return arc(interpolate(t))
       }
