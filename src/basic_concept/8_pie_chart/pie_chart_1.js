@@ -34,9 +34,18 @@ function render(innerRadius, endAngle){
     .attr('fill', function(d, i){
       return colors(i);
     })
-    .attr('d', function(d, i){
-      return arc(d, i)
+    .transition()
+    .duration(1000)
+    .attrTween('d', function(d){
+      const start = { startAngle: 0, endAngle: 0};
+      const interpolate = d3.interpolate(start, d);
+      return function(t){
+        return arc(interpolate(t))
+      }
     })
+    // .attr('d', function(d, i){
+    //   return arc(d, i)
+    // })
 }
 
 render(100)
