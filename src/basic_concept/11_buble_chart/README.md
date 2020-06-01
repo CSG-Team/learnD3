@@ -256,5 +256,5 @@ setInterval(repeat, 3000)
 这里其实使用了经典的 enter - update - exit 模式。可以看到，在更新和进入阶段我们的操作就是构造一个基础图形circle，然后根据数据设置其半径；
 在退出状态也设置了一个简单的退出动画。
 最终代码的效果就是这样：
-
+![bubble demo](https://cdn.nlark.com/yuque/0/2020/gif/204689/1591033522683-e3a01b1a-674e-4caf-94f1-094e29bf01bd.gif)
 
