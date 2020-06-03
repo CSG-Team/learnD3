@@ -2,58 +2,121 @@ const width = 500;
 const height = 500;
 const fullAngel = 2 * Math.PI;
 const colors = d3.scaleOrdinal(d3.schemeCategory10);
+const outerRadius = 200;
+const innerRadius = 100;
+let svg, gBody, gPie;
+const  numberOfDataPoint = 6;
 
-const svg = d3.select('body')
-  .append('svg')
-  .attr('class', 'pie')
-  .attr('height', height)
-  .attr('width', width)
+function randomData() {
+  return Math.random() * 9 + 1;
+}
 
-function render(innerRadius, endAngle){
-  if(!endAngle) endAngle = fullAngel;
-  const data = [
-    { startAngle: 0, endAngle: 0.1 * endAngle },
-    { startAngle: 0.1 * endAngle, endAngle: 0.2 * endAngle },
-    { startAngle: 0.2 * endAngle, endAngle: 0.4 * endAngle },
-    { startAngle: 0.4 * endAngle, endAngle: 0.8 * endAngle },
-    { startAngle: 0.8 * endAngle, endAngle: 1 * endAngle },
-  ];
+const data = d3.range(numberOfDataPoint).map(function (i) {
+  return {id: i, value: randomData()};
+});
+
+render();
+
+
+function render(){
+  if(!svg){
+    svg = d3.select('body')
+      .append('svg')
+      .attr('height', height)
+      .attr('width', width)
+  }
+
+  renderBody();
+}
+
+function renderBody(){
+  if(!gBody){
+    gBody = svg.append('g')
+      .attr('class', 'body')
+  }
+
+  renderPie();
+}
+
+function renderPie(){
+  const pie = d3.pie()
+    .sort(d => d.id)
+    .value(d => d.value);
 
   const arc = d3.arc()
-    .outerRadius(200)
+    .outerRadius(outerRadius)
     .innerRadius(innerRadius);
 
-  svg.select('g').remove();
-  svg.append('g')
-    .attr('transform', 'translate(200, 200)')
-    .selectAll('path.arc')
-    .data(data)
-    .enter()
+  if(!gPie){
+    gPie = gBody.append('g')
+      .attr('class', 'pie')
+      .attr('transform', `translate(${outerRadius}, ${outerRadius})`);
+  }
+  renderArc(pie, arc);
+
+  renderLabel(pie, arc);
+  
+}
+
+function renderArc( pie, arc){
+  const part = gPie.selectAll('path.arc')
+    .data(pie(data));
+  console.log('data is', data)
+  
+  let current = {
+    startAngle:0, endAngle:0
+  }
+
+  part.enter()
     .append('path')
-    .attr('class', 'arc')
-    .attr('fill', function(d, i){
-      return colors(i);
-    })
+    .merge(part)
+    .attr('class', arc)
+    .attr('fill', (d, i) => colors(i))
     .transition()
     .duration(1000)
     .attrTween('d', function(d){
-      // d is current element data
-      const start = { startAngle: 0, endAngle: 0};
+      var currentArc = this.__current__;  
 
-      // 插值器
-      const interpolate = d3.interpolate(start, d);
+      if (!currentArc)
+          currentArc = {startAngle: 0, endAngle: 0};
 
-      // t表示时间
-      return function(t){
+      var interpolate = d3.interpolate(
+                          currentArc, d);
+                          
+      this.__current__ = interpolate(1);
+
+      return function (t){
         return arc(interpolate(t))
       }
     })
-
-
-    // .attr('d', function(d, i){
-    //   return arc(d)
-    // })
 }
 
-render(100)
+function renderLabel(pie, arc) {
+  var labels = gPie.selectAll("text.label")
+          .data(pie(data));  
 
+  labels.enter()
+          .append("text")
+          .attr("class", "label")
+          .style('fill', 'white')
+          .transition()
+          .duration(1000)
+          .attr("transform", function (d) {
+            console.log('arc.centroid(d) +', arc.centroid(d) )
+              return "translate(" 
+                  + arc.centroid(d) + ")";  
+          })
+          .attr("dy", ".35em")
+          .attr("text-anchor", "middle")
+          .text(function (d) {
+              return d.data.id;
+          });
+}
+
+// function changeData(){
+//   for (var j = 0; j < data.length; ++j)
+//   data[j].value = randomData();
+
+//   render();
+
+// }
