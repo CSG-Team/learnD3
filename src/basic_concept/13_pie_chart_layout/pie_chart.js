@@ -96,21 +96,21 @@ function renderLabel(pie, arc) {
           .data(pie(data));  
 
   labels.enter()
-          .append("text")
-          .attr("class", "label")
-          .style('fill', 'white')
-          .transition()
-          .duration(1000)
-          .attr("transform", function (d) {
-            console.log('arc.centroid(d) +', arc.centroid(d) )
-              return "translate(" 
-                  + arc.centroid(d) + ")";  
-          })
-          .attr("dy", ".35em")
-          .attr("text-anchor", "middle")
-          .text(function (d) {
-              return d.data.id;
-          });
+    .append("text")
+    .attr("class", "label")
+    .style('fill', 'white')
+    .transition()
+    .duration(1000)
+    .attr("transform", function (d) {
+      console.log('arc.centroid(d) +', arc.centroid(d) )
+        return "translate(" 
+            + arc.centroid(d) + ")";  
+    })
+    .attr("dy", ".35em")
+    .attr("text-anchor", "middle")
+    .text(function (d) {
+        return d.data.id;
+    });
 }
 
 // function changeData(){
