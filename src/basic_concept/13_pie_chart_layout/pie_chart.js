@@ -82,6 +82,7 @@ function renderArc( pie, arc){
 
       var interpolate = d3.interpolate(
                           currentArc, d);
+      console.log('arc.centroid(d) +', arc.centroid(d) )
                           
       this.__current__ = interpolate(1);
 
@@ -102,7 +103,7 @@ function renderLabel(pie, arc) {
     .transition()
     .duration(1000)
     .attr("transform", function (d) {
-      console.log('arc.centroid(d) +', arc.centroid(d) )
+      console.log('arc.centroid(d) +', arc.centroid(d).toString() )
         return "translate(" 
             + arc.centroid(d) + ")";  
     })
@@ -112,11 +113,3 @@ function renderLabel(pie, arc) {
         return d.data.id;
     });
 }
-
-// function changeData(){
-//   for (var j = 0; j < data.length; ++j)
-//   data[j].value = randomData();
-
-//   render();
-
-// }
