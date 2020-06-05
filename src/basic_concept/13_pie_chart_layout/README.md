@@ -142,14 +142,12 @@ function renderArc( pie, arc){
     .transition()
     .duration(1000)
     .attrTween('d', function(d){
-      var currentArc = this.__current__;  
+      // var currentArc = this.__current__;  
+      // if (!currentArc)
+      //     currentArc = {startAngle: 0, endAngle: 0};
 
-      if (!currentArc)
-          currentArc = {startAngle: 0, endAngle: 0};
-
-      var interpolate = d3.interpolate( currentArc, d);
-                          
-      this.__current__ = interpolate(1);
+      var interpolate = d3.interpolate( {startAngle: 0, endAngle: 0}, d);
+      // this.__current__ = interpolate(1); // 插值器是 0 - 1 变化的
 
       return function (t){
         return arc(interpolate(t))
