@@ -144,7 +144,7 @@ const stackLayoutDataFunction = d3.stack()
   // .offset(d3.stackOffsetExpand )
 
   .order(d3.stackOrderInsideOut)
-                .offset(d3.stackOffsetWiggle)
+  .offset(d3.stackOffsetWiggle)
 
 const sData= stackLayoutDataFunction(odata);
 

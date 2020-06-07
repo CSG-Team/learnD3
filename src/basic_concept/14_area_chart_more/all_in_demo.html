@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D3 Chart</title>
+  <style>
+
+    .line{
+      fill: none;    
+      stroke-width: 2;
+    }
+  </style>
+</head>
+<body>
+  <script src="https://cdn.bootcss.com/d3/4.13.0/d3.js"></script>
+  
+  <script src="./data.js"></script>
+
+  <script src="./all_in_demo.js"></script>
+
+  <br>
+  <button onclick="renderCommon()">普通面积图</button>
+  <button onclick="renderStack()">堆叠面积图</button>
+  <button onclick="renderStackPercent()">百分比面积图</button>
+  <button onclick="renderRiver()">River面积图</button>
+
+</body>
+</html>
