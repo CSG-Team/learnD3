@@ -75,7 +75,7 @@ function renderNodes(root) {
     });
 
   nodesEnter.append('circle')
-    .attr('r', 2)
+    .attr('r', 2.5)
     // .attr('cx', 0)
     // .attr('cy', 0)
     .attr('stroke', 'darkgray')
@@ -117,7 +117,7 @@ function renderLabels(nodeEnter, nodeUpdate, nodeExit) {
     .text(function (d) {
         return d.data.name;
     })
-    .style("font-size", '0.5em');
+    .style("font-size", '0.65em');
 
  nodeUpdate.select("text")
     .style("fill-opacity", 1);
@@ -144,8 +144,10 @@ function renderDataEdges(root){
       // console('genEdgePath(d, d.parant)', genEdgePath(d, d.parant))
       return genEdgePath(d, d.parent)
     })
-    .attr('stroke', '#333')
-    .attr('fill', 'transparent')
+    .attr("fill", "none")
+    .attr("stroke", "#555")
+    .attr("stroke-opacity", 0.4)
+    .attr("stroke-width", 1.5)
     ;
 
   edge.exit().remove();

@@ -1,6 +1,6 @@
 // 基本设置
-const width = 2000;
-const height = 2000;
+const width = 1000;
+const height = 1000;
 const marginTop = 30;
 const marginBottom = 30;
 const marginLeft = 50;
@@ -27,8 +27,8 @@ function renderData(data, ) {
     chart_g = svg.append('g')
       .attr('class', 'body')
       .attr("transform", function (d) {
-        return "translate(" + marginLeft
-                + "," + marginTop+ ")";
+        return "translate(" + width / 2
+                + "," + height / 2+ ")";
     });
 
     // treemap_g = d3.treemap()
@@ -45,18 +45,8 @@ function renderData(data, ) {
   }
 
   const root = d3.hierarchy(data)
-    // .sum(valueAccessor)
-    // .sort((a, b) => b.value - a.value);
 
   tree_g(root);
-
-  console.log('root', root);
-  console.log('root leaves()', root.leaves())
-
-
-  // const cells = chart_g.selectAll('g')
-  //   .data(root.leaves())
-  // renderCells(cells);
 
   renderNodes(root);
 
@@ -81,20 +71,15 @@ function renderNodes(root) {
     // })
     .attr("transform", d => {
       console.log('3333333333->',d)
-      return ` rotate(${d.x * 180 / Math.PI - 90})
+      return `rotate(${d.x * 180 / Math.PI - 90})
       translate(${d.y},0) `
-    }).append('circle')
-    .attr('r', 4)
-    // .attr('cx', 0)
-    // .attr('cy', 0)
-    .attr('stroke', 'darkgray')
-    .attr('fill', 'blue');
-    // .on('click', (d)=>{
-    //   console.log("Click")
-    //   toggle(d)
-    //   renderData(root)
+    })
+    .on('click', (d)=>{
+      console.log("Click")
+      toggle(d)
+      renderData(root)
 
-    // });
+    });
 
   nodesEnter.append('circle')
     .attr('r', 4)
@@ -109,7 +94,8 @@ function renderNodes(root) {
     .transition()
     .duration(TIME_DURATION)
     .attr('transform', (d)=>{
-      return `translate(${d.y}, ${d.x})`
+      return ` rotate(${d.x * 180 / Math.PI - 90})
+      translate(${d.y},0) `
     });
 
 
@@ -121,7 +107,8 @@ function renderNodes(root) {
     const nodeExit = nodesElement.exit()
       .transition().duration(TIME_DURATION)
       .attr('transform', (d)=>{
-        return `translate(${d.y}, ${d.x})`
+        return ` rotate(${d.x * 180 / Math.PI - 90})
+        translate(${d.y},0) `
       })
       .remove();
     renderLabels(nodesEnter, nodesUpdate, nodeExit);
@@ -150,27 +137,26 @@ function renderLabels(nodeEnter, nodeUpdate, nodeExit) {
 }
 
 function renderDataEdges(root){
-  const nodes = root.descendants().slice(1);
-  console.log('nodes --', nodes.slice(1));
-  const edge = chart_g.selectAll('path.edge')
-    .data(nodes, (d) => {
-      return d.id;
-    });
-  
-  edge.enter().insert('path', 'g')
+  const links = root.links();
+  window.myRoot = root;
+  // console.log('nodes --', nodes.slice(1));
+  const edge = chart_g.append("g")
     .attr('class', 'edge')
-    .transition()
-    .duration(TIME_DURATION)
-    .attr('d', (d) => {
-      console.log("d in edge ->", d)
-      // console('genEdgePath(d, d.parant)', genEdgePath(d, d.parant))
-      return genEdgePath(d, d.parent)
-    })
-    .attr('stroke', '#333')
-    .attr('fill', 'transparent')
-    ;
-
-  edge.exit().remove();
+    .attr("fill", "none")
+    .attr("stroke", "#555")
+    .attr("stroke-opacity", 0.4)
+    .attr("stroke-width", 1.5)
+    .selectAll("path")
+    .data(root.links())
+    .enter()
+    .append("path")
+    .attr("d", d3.linkRadial()
+      .angle(d => d.x)
+      .radius(d => d.y)
+    );
+  
+  
+  
 }
 
 function genEdgePath(target, source) {
