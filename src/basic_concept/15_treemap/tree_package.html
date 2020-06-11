@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D3 Chart</title>
+  <style type="text/css">
+    text {
+        font-size: 11px;
+        pointer-events: none;
+    }
+
+    text.parent {
+        fill: steelblue;
+    }
+
+    text.child {
+       display: none;
+    }
+
+    circle {
+        fill: #ccc;
+        stroke: #999;
+        pointer-events: all;
+    }
+
+    circle.parent {
+        fill: steelblue;
+        fill-opacity: .1;
+        stroke: steelblue;
+    }
+
+    circle.parent:hover {
+        stroke-width: .5px;
+    }
+
+    circle.child {
+        pointer-events: none;
+    }
+</style>
+</head>
+<body>
+  <script src="https://cdn.bootcss.com/d3/4.13.0/d3.js"></script>
+  
+  <script src="./data.js"></script>
+
+  <script src="./tree_package.js"></script>
+
+
+</body>
+</html>

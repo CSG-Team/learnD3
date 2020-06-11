@@ -350,6 +350,26 @@ function toggle(d) {
 
 
 ## 包图
-To Be Continued...
+包图类似学习集合的时候的韦恩图。
+要绘制这种图表，核心还是计算位置信息，和前面思路一样：
+得到标准层次信息：
+```js
+const valueAccessor = d => d.size;
+const root = d3.hierarchy(data)
+  .sum(valueAccessor)
+  .sort((a, b) => {
+    return b.value - a.value;
+  })
 
+```
+
+使用布局函数，计算几何信息：
+
+```js
+tree_g = d3.pack()
+  .size([width, height]);
+tree_g(root);
+
+```
+我们使用d3.pack()就构造了包图的布局函数。使用这个布局函数，可以在标准层级数据中，添加x， y， r属性，显然，这些属性就是绘制包图的关键。完整代码在代码仓库中。
 
