@@ -22,7 +22,6 @@ function renderData(data, ) {
       .attr('height', height);
   }
 
-
   if(!chart_g){
     chart_g = svg.append('g')
       .attr('class', 'body')
@@ -31,15 +30,7 @@ function renderData(data, ) {
                 + "," + height / 2+ ")";
     });
 
-    // treemap_g = d3.treemap()
-    //   .size([width, height])
-    //   .round(true)
-    //   .padding(1);
     tree_g = d3.tree()
-      // .size([
-      //   (height - marginTop - marginBottom), // tree 默认是纵向的 所以这里是 y, x
-      //   (width - marginLeft - marginRight),
-      // ]);
       .size([2 * Math.PI, 500])
       .separation((a, b) => (a.parent == b.parent ? 1 : 2) / a.depth)
   }
@@ -47,11 +38,8 @@ function renderData(data, ) {
   const root = d3.hierarchy(data)
 
   tree_g(root);
-
   renderNodes(root);
-
   renderDataEdges(root);
-
 
 }
 
@@ -66,9 +54,6 @@ function renderNodes(root) {
   const nodesEnter = nodesElement.enter()
     .append('g')
     .attr('class', 'node')
-    // .attr('transform', (d)=>{
-    //   return `translate(${d.y}, ${d.x})`
-    // })
     .attr("transform", d => {
       console.log('3333333333->',d)
       return `rotate(${d.x * 180 / Math.PI - 90})
@@ -154,9 +139,6 @@ function renderDataEdges(root){
       .angle(d => d.x)
       .radius(d => d.y)
     );
-  
-  
-  
 }
 
 function genEdgePath(target, source) {
