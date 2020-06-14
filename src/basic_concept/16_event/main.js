@@ -16,6 +16,6 @@ console.log('svg.node()', svg.node())
 
 
 svg.on('mousemove', ()=>{
-  const positionInfo = d3.mouse(svg);
+  const positionInfo = d3.mouse(svg.node());
   textEle.text(positionInfo);
 })
