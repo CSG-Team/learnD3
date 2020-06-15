@@ -35,10 +35,11 @@ svg.on('mousemove', ()=>{
 这里的container就是第二个参数，这里需要是一个html或者svg element。svg.node()的结构就是dom元素，而svg是一个选集selection。
 
 ## 平移&缩放
-
+* d3.event.transform可以得到当前平移的位置x, y以及放大倍数k；
+* d3.zoom()生成一个函数，使用这个函数，给他传入selection作为参数，这个selection就有了缩放能力；
+那么，根据上述亮点，看下下面代码：
 
 ```js
-
 const width = 600, height = 350, r = 50;
 
 const data = [
@@ -75,8 +76,56 @@ function zoomHandler() {
   svg.attr("transform",`translate(${x}, ${y})scale(${k})`);
 }
 ```
-
+d3.zoom().scaleExtent([0.1, 10]).on("zoom", zoomHandler) 这一句最终借助call方法，将selection 作为其参数调用了。另外，zoom中设置了 scaleExtent最大最小缩放比，监听了zoom事件，设置了zoom事件发生时候的处理方法。
+在这个处理方法中，通过d3.event.transform拿到我们要用的x,y,k，最终重新设置svg的transform令其变换。
 
 ## 拖拽
+下面代码实现了一个对小黄球拖拽的功能（加了些端点检测的逻辑）
+```js
+const width = 960, height = 500, r = 50;
 
-to be continue...
+const data = [
+  [width / 2 - r, height / 2 - r],
+  [width / 2 - r, height / 2 + r],
+  [width / 2 + r, height / 2 - r],
+  [width / 2 + r, height / 2 + r]
+];
+
+const svg = d3.select('body')
+  .append('svg')
+  .attr('width', width)
+  .attr('height', height)
+  .style('border', '1px solid gray')
+  .append('g')
+
+const drag = d3.drag()
+  .on('drag', move)
+
+svg.selectAll('circle')
+  .data(data)
+  .enter()
+  .append('circle')
+  .attr('r', r)
+  .style('fill', 'yellow')
+  .attr('transform', d => `translate(${d})`)
+  .call(drag);
+
+
+function move(d) {
+  const x = d3.event.x,
+        y = d3.event.y;
+  if(notOverBound(x, y)){
+    d3.select(this)
+      .attr('transform', `translate(${x}, ${y})`)
+  }
+}
+
+function notOverBound(x, y){
+  return ((x >= 0 + r) && (x <= width - r)) &&
+    ((y >= 0 + r) && (y <= height - r))
+
+}
+
+```
+
+拖拽和上面缩放的思路一致，给选集selection设置监听事件和处理函数；在处理函数中通过transform改变为新的位置。
