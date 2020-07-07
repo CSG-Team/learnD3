@@ -70,7 +70,7 @@ svg.on('mousemove', function() {
     .transition()
     .attr('r', r)
     .transition()
-    .delay(6000)
+    .delay(6000) // 6000 ms后消失
     .duration(700)
     .attr('r', 60)
     .style('fill', 'transparent')
@@ -78,6 +78,8 @@ svg.on('mousemove', function() {
       nodes.shift();
       force.nodes(nodes);
     });
+
+    // 增加节点
     nodes.push(node);
     force.nodes(nodes);
 
@@ -124,5 +126,50 @@ function balance() {
   force.restart();
 }
 ```
+这是一个完整的例子，例子中展示几种状态：元素无相互作用力，相互作用力为斥力，相互作用力为引力，一个定点场力，以及定点场力和相互作用力斥力最终达到平衡的状态。
+首先我们看构造元素部分：
+构造的过程在svg.on('mousemove', function() {}),每当该鼠标事件发生，我们就在当前位置构造一个元素（circle），并更新力学模拟器的点，相当重新告诉力学模拟器，现在有这么多点需要模拟力。这里还涉及一个过程，就是6000ms之后，点会消失，这时当然也需要更新数据，通知模拟器。
+```js
+    // 增加节点
+    nodes.push(node);
+    // 通知模拟器
+    force.nodes(nodes);
+```
+
+再看下是如何改变力学模型的。力学模型的起始参数如同上文中举例所设置的样子，现在我希望改变模型，变成一个场力平衡节点间斥力的情况，该怎么做呢？
+```js
+  // 设置节点间斥力
+  force.force('charge', d3.forceManyBody().strength(-20));
+  // x 方向的场
+  force.force('x', d3.forceX(width / 2));
+  // y 方向的力场
+  force.force('y', d3.forceY(height / 2));
+  // 力学模型重新运行
+  force.restart();
+
+```
+force.force('charge', d3.forceManyBody().strength(-20)); 这行代码为节点间设置了斥力；而force.force('x', d3.forceX(width / 2));在x = width/2的地方设置了一个定点场力，就像地心引力一样。最后force.restart()重新启用这个力学模型，以便新的设置生效。
+
+还有一个关键问题，如何更新状态？
+到现在为止，我们生成了节点，也改变了力学模型，但是一个很重要的点还没有涉及：在力学模型的一次次迭代计算中，元素的运动状态应该被改变了，但是怎么改变呢？
+
+```js
+force.on('tick', ()=>{
+  svg.selectAll('circle')
+    .attr('cx', d => d.x)
+    .attr('cy', d => d.y);
+});
+```
+这里就涉及力学模型的tick事件及其回调函数了，之前我们讲了，力学模型在一次次迭代计算合力，但其实在计算之后，它会重新设置元素的位置属性，比如x，y，vx，vy等，同时会执行tick事件的回调函数，那么我们要做的就是在这个回调函数中，更新视觉元素的位置信息。
+
+关于定点场力，假设只设置一个方向的力会发生什么？
+```js
+// 只设置这个
+force.force('x', d3.forceX(width / 2));
+
+```
+其实就是设置了一个轴向的场力，[这里](https://github.com/xswei/d3-force/blob/master/README.md#forceX)可以了解更多。
+
+
 
 

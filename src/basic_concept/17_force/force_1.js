@@ -36,7 +36,7 @@ svg.on('mousemove', function() {
     .transition()
     .attr('r', r)
     .transition()
-    .delay(6000)
+    .delay(6000) // 6000 ms后消失
     .duration(700)
     .attr('r', 60)
     .style('fill', 'transparent')
@@ -44,6 +44,8 @@ svg.on('mousemove', function() {
       nodes.shift();
       force.nodes(nodes);
     });
+
+    // 增加节点
     nodes.push(node);
     force.nodes(nodes);
 
@@ -76,8 +78,10 @@ function like() {
 // 吸引力 , 设置固定引力
 function likeToPosition() {
   force.force('charge', d3.forceManyBody().strength(1));
-  force.force('x', d3.forceX(width / 2));
-  force.force('y', d3.forceY(height / 2));
+  // force.force('x', d3.forceX(width / 4));
+  force.force('x', d3.forceX(width / 4));
+
+  // force.force('y', d3.forceY(height / 2));
   // force.force('y', null);  // 如果这样就是某个轴方向的吸引力
 
   force.restart();
