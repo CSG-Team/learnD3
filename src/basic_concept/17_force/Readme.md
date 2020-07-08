@@ -9,7 +9,8 @@ D3模拟力本质上D3提供模拟力的布局方法，我们前面的文章中�
 * 应用2:聚类
 * 应用3:力导向图
 
-## 基础力
+## 构造力学模拟器
+在构造力学模拟器前先了解几个基础力：
 1. 引力和斥力：其力学模型可以类比电荷力，可以给元素间线性设定相互是受到引力还是斥力。通过设定一个有符号的值表示这个力的大小，正值表示引力，负值表示斥力。
 2. 定点力：定点力是指，这个力存在于画布平面上，不是元素之间相互作用，而是所有这个空间中的元素同时受到的某一区域的力，从物理上看，定点力模拟的是场力，当然，所谓定点不一定是点这么小的单位，也可以是线，或者区域。
 3. 碰撞力：碰撞力用来模拟元素在运动过程中发誓接触后所受力的大小。
@@ -30,6 +31,8 @@ const force = d3.forceSimulation()
 那么，迭代终止的条件就是在d3内部，每一次计算合力时都会修改一个从1向0变化的值，总体来讲，系统越趋近力平衡状态，我们希望alpha越接近0，换句话说，每次alpha衰减的越少，迭代的次数越多，越接近真相（默认当alpha < 0.001时，迭代终止）。
 所以，alphaDecay，就是每次迭代时alpha值的衰减值，这个值如果为0，则表示一致在进行模拟，never stop～
 另外有一个函数tick()，我们马上会看到，这其实是模拟的过程中每一次的回调函数，通常在这个函数中做的事情就是重绘视觉元素。
+
+## 通过Demo学习
 这些基本概念学习完成后，看一个完整点的demo：
 ```js
 const width = 1000;
@@ -127,6 +130,7 @@ function balance() {
 }
 ```
 这是一个完整的例子，例子中展示几种状态：元素无相互作用力，相互作用力为斥力，相互作用力为引力，一个定点场力，以及定点场力和相互作用力斥力最终达到平衡的状态。
+### 视觉元素构造
 首先我们看构造元素部分：
 构造的过程在svg.on('mousemove', function() {}),每当该鼠标事件发生，我们就在当前位置构造一个元素（circle），并更新力学模拟器的点，相当重新告诉力学模拟器，现在有这么多点需要模拟力。这里还涉及一个过程，就是6000ms之后，点会消失，这时当然也需要更新数据，通知模拟器。
 ```js
@@ -136,6 +140,7 @@ function balance() {
     force.nodes(nodes);
 ```
 
+### 改变力学模型：场力和引力与斥力（多体力）
 再看下是如何改变力学模型的。力学模型的起始参数如同上文中举例所设置的样子，现在我希望改变模型，变成一个场力平衡节点间斥力的情况，该怎么做呢？
 ```js
   // 设置节点间斥力
@@ -150,6 +155,7 @@ function balance() {
 ```
 force.force('charge', d3.forceManyBody().strength(-20)); 这行代码为节点间设置了斥力；而force.force('x', d3.forceX(width / 2));在x = width/2的地方设置了一个定点场力，就像地心引力一样。最后force.restart()重新启用这个力学模型，以便新的设置生效。
 
+### 更新状态和tick回调
 还有一个关键问题，如何更新状态？
 到现在为止，我们生成了节点，也改变了力学模型，但是一个很重要的点还没有涉及：在力学模型的一次次迭代计算中，元素的运动状态应该被改变了，但是怎么改变呢？
 
@@ -169,6 +175,47 @@ force.force('x', d3.forceX(width / 2));
 
 ```
 其实就是设置了一个轴向的场力，[这里](https://github.com/xswei/d3-force/blob/master/README.md#forceX)可以了解更多。
+
+### 速度衰减（摩擦力）
+我们修改下上述Demo的视觉元素构造过程：
+```js
+let prevPoint;
+
+svg.on('mousemove', function() {
+  const point = d3.mouse(this)
+  const node = {
+    x: point[0],
+    y: point[1],
+    // 设置下初始速度
+    vx: prevPoint? point[0] - prevPoint[0] : point[0],
+    vy: prevPoint? point[1] - prevPoint[1] : point[1],
+  };
+  prevPoint = point;
+  svg.append('circle')
+    .data([node])
+    .attr('class', 'node')
+    .attr('cx', d => d.x)
+    .attr('cy', d => d.y)
+    .attr('r', 1e-6)
+    .style('fill', randomColor() )
+    .transition()
+    .attr('r', r)
+    .transition()
+    .delay(6000) // 6000 ms后消失
+    .duration(700)
+    .attr('r', 60)
+    .style('fill', 'transparent')
+    .on('end', function(){
+      nodes.shift();
+      force.nodes(nodes);
+    });
+    // 增加节点
+    nodes.push(node);
+    force.nodes(nodes);
+});
+
+```
+我们在构造节点的时候，设置了vx、vy属性，这两个属性表示运动速度。所以在这个例子中，当我改变力学模型的velocityDecay设置值的时候，会感受到元素运动的明显不同。（假设将其设置为0，则不会停下运动）
 
 
 
