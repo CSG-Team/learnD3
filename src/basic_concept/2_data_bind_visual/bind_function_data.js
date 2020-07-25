@@ -11,10 +11,10 @@ const newData = () => {
   return data;
 };
 
-function handle_bind_function_data () {
+function handle_bind_function_data() {
 
   // 定时更改数据并重新渲染
-  setInterval(()=>{
+  setInterval(() => {
     renderData();
   }, 1500);
 
@@ -25,13 +25,13 @@ function handle_bind_function_data () {
 /**
  * 渲染可视化数据
  */
-function renderData () {
+function renderData() {
 
   const divs = d3.select('#container')
     .selectAll('div') // d3 可以预选择元素，这时候页面并没这些元素， 可以理解为 声明应该有这些元素
     .data(newData); // data选中已经进入可视化状态的数据
-  
-  divs.enter()  // enter选中了未进入可视化状态
+
+  divs.enter() // enter选中了未进入可视化状态
     .append('div')
     .style('width', (d, i) => {
       return d(i) + 'px';
